@@ -1,9 +1,58 @@
 import './App.css'
-import Router from "./routes/Router"
+import { useState } from 'react'
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import PostBlog from './pages/PostBlog';
+import ViewBlog from './pages/ViewBlog';
+import Home from './pages/Home/Home';
+function App() {
+  const [blogs, setBlogs] = useState([
+    {title:"titulo",author:"autor",body:"cuerpo",id:1,user:{
+      name:"usuario1",
+      id:1
+    }},
+    {title:"titulo2",author:"autor2",body:"cuerpo",id:2,user:{
+      name:"usuario2",
+      id:2
+    }},
+    {title:"titulo3",author:"autor3",body:"cuerpo",id:3,user:{
+      name:"usuario3",
+      id:3
+    }},
+  ])
+  const addBlog = (newBlog) => {
+    setBlogs([...blogs, { ...newBlog, id: blogs.length + 1 }]);
+  };
+  
+  const [searchTerm, setSearchTerm] = useState('');
 
-
-export default function App() {
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
   return (
-    <Router />
+     <Router>
+      <div>
+        <header>
+          <h1>Mi Blog</h1>
+          <input
+            type="text"
+            placeholder="Buscar..."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          <nav>
+            <Link to="/">Inicio</Link>
+            <Link to="/new-post">Nuevo Post</Link>
+          </nav>
+        </header>
+        <Routes>
+          <Route path="/" element={<Home blogs={blogs} searchTerm={searchTerm}/>} />
+          <Route path="/posts/:id" element={<ViewBlog blogs={blogs} />} />
+          <Route path="/new-post" element={<PostBlog addBlog={addBlog} />} />
+        </Routes>
+      </div>
+    </Router>
+      
   )
 }
+
+export default App
